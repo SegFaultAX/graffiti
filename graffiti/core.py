@@ -64,9 +64,9 @@ def deps_for(nodes, key):
     if key not in nodes:
         return [key]
 
-    required = nodes[key]["required"]
-    return set(required + [dep for r in required
-                               for dep in deps_for(nodes, r)])
+    deps = nodes[key]["required"]
+    return set(deps + [dep for d in deps
+                           for dep in deps_for(nodes, d)])
 
 def build_dependency_tree(nodes):
     """Find all dependencies for all keys in a given graph"""
@@ -120,18 +120,6 @@ def satisfied_by(deps, inputs):
             acc.add(k)
     return acc
 
-def call_graph(graph, key, inputs):
-    """Call a node in the graph with the correct subset of required and optional
-    keys from the inputs
-    """
-
-    node = graph["nodes"][key]
-    acceptable = set(node["required"]) | set(node["optional"])
-    req = util.select_keys(lambda k, _: k in acceptable, inputs)
-    args = util.merge(node["optional"], req)
-
-    return node["fn"](**args)
-
 def required_keys(graph, keys):
     """Find all required keys to expand the graph. If keys is None, all keys are
     expanded
@@ -144,6 +132,18 @@ def required_keys(graph, keys):
         set.union(*[graph["dependencies"][key] for key in keys]))
 
     return (required, set(graph["nodes"]) - required)
+
+def call_graph(graph, key, inputs):
+    """Call a node in the graph with the correct subset of required and optional
+    keys from the inputs
+    """
+
+    node = graph["nodes"][key]
+    acceptable = set(node["required"]) | set(node["optional"])
+    req = util.select_keys(lambda k, _: k in acceptable, inputs)
+    args = util.merge(node["optional"], req)
+
+    return node["fn"](**args)
 
 def run_graph(graph, inputs, *keys):
     """Run a graph given a set of inputs and, optionally, a subset of keys from
