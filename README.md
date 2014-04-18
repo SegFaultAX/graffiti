@@ -27,6 +27,7 @@ stats_descriptor = {
 
 graph = Graph(stats_descriptor)
 graph({ "xs": [1, 2, 3, 4, 5] })
+#=> {'xs': [1, 2, 3, 4, 5], 'n': 5, 'm': 3, 'm2': 11, 'v': 2}
 
 # if graphviz is installed
 graph.visualize()
