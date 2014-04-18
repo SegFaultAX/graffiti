@@ -119,4 +119,5 @@ This project is still under active development. Contact me on Twitter
 ## License
 
 Copyright 2014 Michael-Keith Bernard
+
 Availabe under the MIT License. See LICENSE for full details.
