@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import inspect
+import itertools
 
 import util
 import keys
@@ -156,6 +157,14 @@ def call_graph(graph, key, inputs):
 
     return node["fn"](**args)
 
+def run_once(graph, inputs, ignore):
+    sat = satisfied_by(graph["dependencies"], inputs) - ignore
+    if not sat:
+        raise GraphError("Graph has unsatisfiable requirements")
+
+    new_vals = { k: call_graph(graph, k, inputs) for k in sat }
+    return util.merge(inputs, new_vals)
+
 def run_graph(graph, inputs, *keys):
     """Run a graph given a set of inputs and, optionally, a subset of keys from
     the graph
@@ -167,14 +176,6 @@ def run_graph(graph, inputs, *keys):
     required, uneval = required_keys(graph, keys)
     required |= set(inputs)
 
-    def _run(inputs):
-        while required > set(inputs):
-            sat = satisfied_by(graph["dependencies"], inputs) - uneval
-            if not sat:
-                return None
-            new_vals = { k: call_graph(graph, k, inputs) for k in sat }
-            inputs = util.merge(inputs, new_vals)
-        return inputs
-
-    return _run(inputs)
-
+    runner = lambda inputs: run_once(graph, inputs, uneval)
+    runs = iterate(runner, inputs)
+    return next(itertools.dropwhile())
