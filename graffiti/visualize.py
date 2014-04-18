@@ -31,7 +31,7 @@ def to_graphviz(graph):
 
 def visualize(graph, filename="awesome_graph.gv"):
     data = to_graphviz(graph)
-    dot = Digraph(comment="graph-py")
+    dot = Digraph(comment="graffiti")
 
     for node in data["nodes"]:
         dot.node(node)

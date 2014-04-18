@@ -1,4 +1,4 @@
-# graph-py - For structured computation
+# graffiti - For structured computation
 
 Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 
@@ -27,7 +27,7 @@ computation builds up more values based on things we've computed already. It's
 convenient to visualize this computation as a graph with the user inputs at the
 root and values we're interested in at the leaves.
 
-graph-py allows you to structure your computation in exactly that fashion:
+graffiti allows you to structure your computation in exactly that fashion:
 
 ```python
 stats_graph = {
@@ -40,7 +40,7 @@ graph = Graph(stats_graph)
 graph({ "xs": range(100) })
 ```
 
-graph-py finds the relationships between the nodes in your graph and determines
+graffiti finds the relationships between the nodes in your graph and determines
 the optimal execution order. Leaves in the graph are computed lazily which means
 we can choose to only evaluate the ones we're interested in:
 
@@ -48,7 +48,7 @@ we can choose to only evaluate the ones we're interested in:
 graph({ "xs": range(100) }, "m", "n")
 ```
 
-In this case, graph-py will only evaluate what's needed to compute m and n, but
+In this case, graffiti will only evaluate what's needed to compute m and n, but
 not the rest of the graph. You can also build nested graphs with dependencies
 across nesting levels:
 
@@ -108,7 +108,7 @@ v3 = graph(v2) # the rest of the graph
 This allows you to defer the evaluation of expensive keys until the moment
 they're actually needed without duplicating previous computations.
 
-Using graph-py allows you to structure your computation and the complex
+Using graffiti allows you to structure your computation and the complex
 interdependencies therein naturally and efficiently. Most importantly, your
 computational pipeline is just data. That means it's easy to inspect, easy to
 reason about, and easy to build tooling around.
