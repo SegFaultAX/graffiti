@@ -17,7 +17,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from graphviz import Digraph
+from pydot import Dot, Node, Edge
 
 __author__ = "Michael-Keith Bernard"
 
@@ -29,12 +29,14 @@ def to_graphviz(graph):
         "edges": edges
     }
 
-def visualize(graph, filename="awesome_graph.gv"):
+def visualize(graph, filename="graph.png"):
     data = to_graphviz(graph)
-    dot = Digraph(comment="graffiti")
+
+    dot = Dot(graph_type="digraph")
 
     for node in data["nodes"]:
-        dot.node(node)
+        dot.add_node(Node(node))
+    for a, b in data["edges"]:
+        dot.add_edge(Edge(a, b))
 
-    dot.edges(data["edges"])
-    dot.render(filename)
+    dot.write_png(filename)

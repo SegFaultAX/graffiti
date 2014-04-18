@@ -63,7 +63,7 @@ class Graph(object):
     def __repr__(self):
         return "Graph({})".format(pformat(self.graph))
 
-    def visualize(self):
+    def visualize(self, filename="graph.png"):
         from visualize import visualize
-        visualize(self.graph)
+        visualize(self.graph, filename)
 

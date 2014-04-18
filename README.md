@@ -139,6 +139,29 @@ v3 = graph(v2) # the rest of the graph
 This allows you to defer the evaluation of expensive keys until the moment
 they're actually needed without duplicating previous computations.
 
+graffiti also supports drawing the transitive graph of dependencies:
+
+```python
+stats_graph = {
+    "n": lambda xs: len(xs),
+    "m": lambda xs, n: sum(xs) / n,
+    "m2": lambda xs, n: sum(x ** 2 for x in xs) / n,
+    "v": lambda m, m2: m2 - m ** 2,
+    "order": {
+        "sorted": lambda xs: sorted(xs),
+        "reversed": lambda xs: sorted(xs, reverse=True)
+    },
+    "ends": {
+        "first3": lambda order__sorted: order__sorted[:3],
+        "last3": lambda order__reversed: order__reversed[:3:-1]
+    }
+}
+graph = Graph(stats_graph)
+graph.visualize()
+```
+
+![](https://raw.githubusercontent.com/SegFaultAX/graffiti/master/example_graph.png)
+
 Using graffiti allows you to structure your computation and the complex
 interdependencies therein naturally and efficiently. Most importantly, your
 computational pipeline is just data. That means it's easy to inspect, easy to

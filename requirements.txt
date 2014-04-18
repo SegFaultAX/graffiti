@@ -2,5 +2,6 @@
 
 nose
 graphviz
+pydot
 pyflakes
 pylint
