@@ -20,7 +20,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import inspect
-from operator import or_
 
 import util
 import keys
@@ -86,12 +85,17 @@ def graph_parameters(nodes):
 
     return (rin - out, oin, out)
 
+def graph_nodes(dependencies):
+    """Find all nodes referenced by this graph"""
+
+    return set.union(set(dependencies), *dependencies.values())
 
 def compile_graph(descriptor):
     """Compile a graph descriptor into a graph"""
 
     nodes = build_nodes(keys.simplify(descriptor))
     deps = build_dependency_tree(nodes)
+    node_names = graph_nodes(deps)
     req, opt, out = graph_parameters(nodes)
 
     return {
@@ -101,6 +105,7 @@ def compile_graph(descriptor):
         "required_inputs": req,
         "optional_inputs": opt,
         "outputs": out,
+        "node_names": node_names,
     }
 
 def satisfied_by(deps, inputs):
@@ -136,7 +141,7 @@ def required_keys(graph, keys):
         keys = set(graph["nodes"])
 
     required = (set(keys) |
-        reduce(or_, [graph["dependencies"][key] for key in keys]))
+        set.union(*[graph["dependencies"][key] for key in keys]))
 
     return (required, set(graph["nodes"]) - required)
 

@@ -31,6 +31,19 @@ def is_dict(d):
 
     return isinstance(d, dict)
 
+def get(c, k, default=None):
+    try:
+        return c[k]
+    except:
+        return default
+
+def get_in(c, ks, default=None):
+    for k in ks:
+        c = get(c, k, default)
+        if c is default:
+            break
+    return c
+
 def group_by(fn, l):
     """Group elements in `l` by a keying function `fn`"""
 
@@ -68,7 +81,7 @@ def assoc_in(d, key_path, v):
     if not rest:
         return assoc(d, key, v)
     else:
-        return assoc(d, key, assoc_in(d.get(key), rest, v))
+        return assoc(d, key, assoc_in(get(d, key), rest, v))
 
 def merge(*dicts):
     """Merges any number of dicts together, replacing repeated keys"""

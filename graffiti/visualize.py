@@ -22,7 +22,7 @@ from graphviz import Digraph
 __author__ = "Michael-Keith Bernard"
 
 def to_graphviz(graph):
-    nodes = set(graph["dependencies"])
+    nodes = graph["node_names"]
     edges = set((k, v) for k, vs in graph["dependencies"].iteritems() for v in vs)
     return {
         "nodes": nodes,

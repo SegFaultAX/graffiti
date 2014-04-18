@@ -53,6 +53,10 @@ class Graph(object):
     def outputs(self):
         return self.graph["outputs"]
 
+    @property
+    def node_names(self):
+        return self.graph["node_names"]
+
     def __call__(self, inputs, *keys):
         return desimplify(run_graph(self.graph, inputs, *keys))
 
