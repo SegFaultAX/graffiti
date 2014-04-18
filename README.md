@@ -1,4 +1,6 @@
-# graffiti - a library for structured computation
+# graffiti
+
+A library for structured computation
 
 Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 
@@ -10,7 +12,7 @@ Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 1. `cd graffiti/`
 1. To install: `python setup.py install`
 1. To get development dependencies: `pip install -r requirements.txt`
-1. To run tests: `nosestests`
+1. To run tests: `nosetests`
 
 ## Overview
 
