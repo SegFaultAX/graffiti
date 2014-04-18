@@ -5,7 +5,7 @@ from setuptools import Command, setup
 Graffiti
 --------
 
-A library for structured computation
+A library for declarative computation
 
 Intro
 `````
@@ -79,7 +79,7 @@ setup(
     license='MIT',
     author='Michael-Keith Bernard',
     author_email='mkbernard.dev@gmail.com',
-    description='A library for structured computation.',
+    description='A library for declarative computation.',
     long_description=__doc__,
     packages=['graffiti'],
     include_package_data=True,

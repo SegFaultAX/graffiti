@@ -1,4 +1,4 @@
-# graffiti - a library for structured computation
+# graffiti - a library for declarative computation
 
 Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 
