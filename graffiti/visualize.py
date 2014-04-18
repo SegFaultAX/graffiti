@@ -29,13 +29,22 @@ def to_graphviz(graph):
         "edges": edges
     }
 
-def visualize(graph, filename="graph.png"):
-    data = to_graphviz(graph)
+def format_edge(graph, node):
+    if node not in graph["nodes"]:
+        return node
 
+    args = graph["nodes"][node]["required"]
+    kwargs = ["{}={}".format(k, v) for k, v in
+              graph["nodes"][node]["optional"].iteritems()]
+    return "{}[{}]".format(node, ", ".join(args + kwargs), )
+
+def visualize(graph, filename="graph.png", include_args=True):
+    data = to_graphviz(graph)
     dot = Dot(graph_type="digraph")
 
     for node in data["nodes"]:
-        dot.add_node(Node(node))
+        fmt = format_edge(graph, node) if include_args else node
+        dot.add_node(Node(node, label=fmt))
     for a, b in data["edges"]:
         dot.add_edge(Edge(a, b))
 
