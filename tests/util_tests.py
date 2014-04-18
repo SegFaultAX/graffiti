@@ -1,3 +1,4 @@
+from itertools import islice
 from nose.tools import raises
 
 from graffiti import util
@@ -41,6 +42,10 @@ def test_concat():
     assert util.concat([], l1) == l1
     assert util.concat(l1, []) == l1
     assert util.concat(l1, l2) == l1 + l2
+
+def test_iterate():
+    it = util.iterate(lambda n: n + 1, 0)
+    assert list(islice(it, 10)) == range(10)
 
 def test_group_by():
     l = [1, 2, 3, 4]

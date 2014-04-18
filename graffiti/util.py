@@ -49,6 +49,15 @@ def concat(*lists):
 
     return [e for l in lists for e in l]
 
+def iterate(fn, init):
+    """Prodcue values of fn by repeatedly applying it to init, yielding:
+        init, fn(init), fn(fn(init)), fn(fn(fn(init))), ...
+    """
+
+    while True:
+        yield init
+        init = fn(init)
+
 def group_by(fn, l):
     """Group elements in `l` by a keying function `fn`"""
 
