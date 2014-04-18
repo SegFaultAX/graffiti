@@ -1,3 +1,5 @@
+from nose.tools import raises
+
 from graffiti import core
 from graffiti.keys import simplify
 
@@ -68,6 +70,17 @@ def test_deps_for_nested():
     }
     nodes = core.build_nodes(simplify(graph))
     assert core.deps_for(nodes, "d") == set(["n", "a", "b__c"])
+
+@raises(core.GraphError)
+def test_deps_for_cycle():
+    graph = {
+        "a": lambda b: 1,
+        "b": lambda c: 1,
+        "c": lambda a: 1
+    }
+    nodes = core.build_nodes(simplify(graph))
+    core.deps_for(nodes, "b")
+
 
 def test_build_dependency_tree():
     graph = {

@@ -44,6 +44,11 @@ def get_in(c, ks, default=None):
             break
     return c
 
+def concat(*lists):
+    """Concatenate multiple lists together"""
+
+    return [e for l in lists for e in l]
+
 def group_by(fn, l):
     """Group elements in `l` by a keying function `fn`"""
 

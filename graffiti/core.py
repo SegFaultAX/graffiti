@@ -26,6 +26,9 @@ import keys
 
 __author__ = "Michael-Keith Bernard"
 
+class GraphError(Exception):
+    pass
+
 def fninfo(fn):
     """Gathers argument information about a function.
     Returns the tuple `(required arguments, optional arguments)`
@@ -61,12 +64,20 @@ def build_nodes(graph):
 def deps_for(nodes, key):
     """Find all dependencies for a key in a given graph"""
 
-    if key not in nodes:
-        return [key]
+    def _deps(key, path):
+        if key not in nodes:
+            return [key]
 
-    deps = nodes[key]["required"]
-    return set(deps + [dep for d in deps
-                           for dep in deps_for(nodes, d)])
+        if key in path:
+            msg = "Cycle detected between {} and {}".format(
+                path[0], path[-1])
+            raise GraphError(msg)
+
+        deps = nodes[key]["required"]
+        trans = [_deps(dep, path + [key]) for dep in deps]
+        return set(util.concat(deps, *trans))
+
+    return _deps(key, [])
 
 def build_dependency_tree(nodes):
     """Find all dependencies for all keys in a given graph"""

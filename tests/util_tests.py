@@ -35,6 +35,13 @@ def test_get_in_default_nested():
     assert util.get_in({}, ["a", "b"], "foo") == "foo"
     assert util.get_in({}, ["a", 0], { "a": [1, 2, 3] }) == { "a": [1, 2, 3] }
 
+def test_concat():
+    l1 = [1, 2]
+    l2 = [3, 4]
+    assert util.concat([], l1) == l1
+    assert util.concat(l1, []) == l1
+    assert util.concat(l1, l2) == l1 + l2
+
 def test_group_by():
     l = [1, 2, 3, 4]
     fn = lambda n: n % 2 == 0
