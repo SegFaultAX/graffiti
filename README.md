@@ -1,8 +1,37 @@
-# graffiti - For structured computation
+# graffiti - a library for structured computation
 
 Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 
-## Usage:
+## Installation
+
+**Note**: graffiti is only available through github at the moment!
+
+1. `git clone https://github.com/SegFaultAX/graffiti`
+1. `cd graffiti/`
+1. To install: `python setup.py install`
+1. To get development dependencies: `pip install -r requirements.txt`
+1. To run tests: `nosestests`
+
+## Overview
+
+```python
+from graffiti import Graph
+
+stats_descriptor = {
+    "n": lambda xs: len(xs),
+    "m": lambda xs, n: sum(xs) / n,
+    "m2": lambda xs, n: sum(x ** 2 for x in xs) / n,
+    "v": lambda m, m2: m2 - m ** 2
+}
+
+graph = Graph(stats_descriptor)
+graph({ "xs": [1, 2, 3, 4, 5] })
+
+# if graphviz is installed
+graph.visualize()
+```
+
+## Tutorial
 
 Consider the following perfectly reasonable Python code:
 
