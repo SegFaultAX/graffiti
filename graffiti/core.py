@@ -45,7 +45,7 @@ def fninfo(fn):
 
     return {
         "fn": fn,
-        "required": required,
+        "required": set(required),
         "optional": optional,
     }
 
@@ -91,7 +91,7 @@ def graph_parameters(nodes):
     rin, oin = set(), set()
 
     for node in nodes.values():
-        rin |= set(node["required"])
+        rin |= node["required"]
         oin |= set(node["optional"])
 
     return (rin - out, oin, out)
@@ -150,7 +150,7 @@ def call_graph(graph, key, inputs):
     """
 
     node = graph["nodes"][key]
-    acceptable = set(node["required"]) | set(node["optional"])
+    acceptable = node["required"] | set(node["optional"])
     req = util.select_keys(lambda k, _: k in acceptable, inputs)
     args = util.merge(node["optional"], req)
 

@@ -7,7 +7,7 @@ def test_fninfo_noargs():
     fn = lambda: 1
     info = {
         "fn": fn,
-        "required": [],
+        "required": set(),
         "optional": {}
     }
     assert core.fninfo(fn) == info
@@ -16,7 +16,7 @@ def test_fninfo_args():
     fn = lambda a, b: 1
     info = {
         "fn": fn,
-        "required": ["a", "b"],
+        "required": set(["a", "b"]),
         "optional": {}
     }
     assert core.fninfo(fn) == info
@@ -25,7 +25,7 @@ def test_fninfo_kwargs():
     fn = lambda a, b=1: 1
     info = {
         "fn": fn,
-        "required": ["a"],
+        "required": set(["a"]),
         "optional": { "b": 1 }
     }
     assert core.fninfo(fn) == info
