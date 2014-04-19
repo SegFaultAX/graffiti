@@ -58,6 +58,27 @@ def iterate(fn, init):
         yield init
         init = fn(init)
 
+def fixpoint(fn, inputs, cmp=None, max_iter=10000):
+    """Find fixpoint for a function and set of starting inputs. `cmp` tests if a
+    fixpoint has been computed. If `max_iter` is None, the algorithm will run
+    indefinitely
+    """
+
+    if cmp is None:
+        cmp = lambda a, b: a == b
+
+    it = iterate(fn, inputs)
+    prev = next(it)
+
+    for idx, e in enumerate(it):
+        if cmp(prev, e):
+            return e
+        if max_iter and idx >= max_iter:
+            msg = "Unable to determine fixpoint after {} iterations".format(
+                max_iter)
+            raise ValueError(msg)
+        prev = e
+
 def group_by(fn, l):
     """Group elements in `l` by a keying function `fn`"""
 

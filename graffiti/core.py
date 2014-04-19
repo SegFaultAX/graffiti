@@ -142,7 +142,7 @@ def required_keys(graph, keys):
     required = (set(keys) |
         set.union(*[graph["dependencies"][key] for key in keys]))
 
-    return (required, set(graph["nodes"]) - required)
+    return required
 
 def call_graph(graph, key, inputs):
     """Call a node in the graph with the correct subset of required and optional
@@ -156,6 +156,20 @@ def call_graph(graph, key, inputs):
 
     return node["fn"](**args)
 
+def run_once(graph, inputs, required=None):
+    """Evaluate a single set of satisfiable dependecies. `required` is the set
+    of keys that should be evaluated, or None for all keys
+    """
+
+    if required and set(inputs) >= required:
+        return inputs
+
+    sat = satisfied_by(graph["dependencies"], inputs)
+    if required:
+        sat &= set(required)
+    new_vals = { k: call_graph(graph, k, inputs) for k in sat }
+    return util.merge(inputs, new_vals)
+
 def run_graph(graph, inputs, *keys):
     """Run a graph given a set of inputs and, optionally, a subset of keys from
     the graph
@@ -164,17 +178,12 @@ def run_graph(graph, inputs, *keys):
     if inputs is None:
         inputs = {}
 
-    required, uneval = required_keys(graph, keys)
-    required |= set(inputs)
+    required = required_keys(graph, keys) | set(inputs)
 
-    def _run(inputs):
-        while required > set(inputs):
-            sat = satisfied_by(graph["dependencies"], inputs) - uneval
-            if not sat:
-                return None
-            new_vals = { k: call_graph(graph, k, inputs) for k in sat }
-            inputs = util.merge(inputs, new_vals)
-        return inputs
+    runner = lambda inputs: run_once(graph, inputs, required)
+    solved = util.fixpoint(runner, inputs)
 
-    return _run(inputs)
+    if set(solved) < required:
+        raise GraphError("Unsatisfiable dependencies")
 
+    return solved

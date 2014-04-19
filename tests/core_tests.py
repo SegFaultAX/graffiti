@@ -156,9 +156,9 @@ def test_required_keys():
         "b": lambda a, c=10: 3
     }
     compiled = core.compile_graph(graph)
-    assert core.required_keys(compiled, []) == (set(["n", "a", "b"]), set())
-    assert core.required_keys(compiled, ["a"]) == (set(["n", "a"]), set(["b"]))
-    assert core.required_keys(compiled, ["b"]) == (set(["n", "a", "b"]), set())
+    assert core.required_keys(compiled, []) == set(["n", "a", "b"])
+    assert core.required_keys(compiled, ["a"]) == set(["n", "a"])
+    assert core.required_keys(compiled, ["b"]) == set(["n", "a", "b"])
 
 def test_call_graph():
     graph = {

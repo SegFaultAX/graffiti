@@ -1,7 +1,7 @@
 from nose.tools import with_setup
 
 from graffiti import Graph
-from graffiti.core import compile_graph, run_graph
+from graffiti.core import compile_graph, run_once, run_graph
 from graffiti.keys import desimplify
 
 descriptor = {
@@ -29,6 +29,21 @@ def is_subdict(d1, d2):
 
 def has_props(g, props):
     return all(getattr(g, prop) == val for prop, val in props.iteritems())
+
+def test_once_all():
+    res = run_once(graph, inputs)
+    assert has_keys(res, "len", "sum", "inc")
+    assert not has_keys(res, "mean")
+
+def test_once_required():
+    res = run_once(graph, inputs, set(["len"]))
+    assert has_keys(res, "len")
+    assert not has_keys(res, "mean", "sum", "inc")
+
+def test_once_complete():
+    completed = { k: 1 for k in graph["nodes"] }
+    res = run_once(graph, completed)
+    assert res == completed
 
 def test_run_single_key():
     res = run_graph(graph, inputs, "len")

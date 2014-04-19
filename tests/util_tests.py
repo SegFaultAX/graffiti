@@ -47,6 +47,20 @@ def test_iterate():
     it = util.iterate(lambda n: n + 1, 0)
     assert list(islice(it, 10)) == range(10)
 
+def test_fixpoint_converging():
+    fn = lambda n: n / 2
+    assert util.fixpoint(fn, 100) == 0
+
+@raises(ValueError)
+def test_fixpoint_nonconverging():
+    fn = lambda n: n * 2
+    util.fixpoint(fn, 1, max_iter=20)
+
+def test_fixpoint_cmp():
+    fn = lambda n: n / 2.0
+    cmp = lambda a, b: (a - b) < 0.1
+    assert util.fixpoint(fn, 1, cmp) == 0.0625
+
 def test_group_by():
     l = [1, 2, 3, 4]
     fn = lambda n: n % 2 == 0
