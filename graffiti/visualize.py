@@ -33,7 +33,7 @@ def format_edge(graph, node):
     if node not in graph["nodes"]:
         return node
 
-    args = graph["nodes"][node]["required"]
+    args = list(graph["nodes"][node]["required"])
     kwargs = ["{}={}".format(k, v) for k, v in
               graph["nodes"][node]["optional"].iteritems()]
     return "{}[{}]".format(node, ", ".join(args + kwargs), )

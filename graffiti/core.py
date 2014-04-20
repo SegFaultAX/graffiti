@@ -23,6 +23,7 @@ import inspect
 
 import util
 import keys
+import strategy
 
 __author__ = "Michael-Keith Bernard"
 
@@ -119,31 +120,6 @@ def compile_graph(descriptor):
         "node_names": node_names,
     }
 
-def satisfied_by(deps, inputs):
-    """Find all nodes that are satisfied by the inputs but not already in the
-    inputs.
-    """
-
-    acc = set()
-    inputs = set(inputs)
-    for k, v in deps.iteritems():
-        if inputs >= v and k not in inputs:
-            acc.add(k)
-    return acc
-
-def required_keys(graph, keys):
-    """Find all required keys to expand the graph. If keys is None, all keys are
-    expanded
-    """
-
-    if not keys:
-        keys = set(graph["nodes"])
-
-    required = (set(keys) |
-        set.union(*[graph["dependencies"][key] for key in keys]))
-
-    return required
-
 def call_graph(graph, key, inputs):
     """Call a node in the graph with the correct subset of required and optional
     keys from the inputs
@@ -164,7 +140,7 @@ def run_once(graph, inputs, required=None):
     if required and set(inputs) >= required:
         return inputs
 
-    sat = satisfied_by(graph["dependencies"], inputs)
+    sat = strategy.satisfied_by(graph["nodes"], inputs)
     if required:
         sat &= set(required)
     new_vals = { k: call_graph(graph, k, inputs) for k in sat }
@@ -178,7 +154,7 @@ def run_graph(graph, inputs, *keys):
     if inputs is None:
         inputs = {}
 
-    required = required_keys(graph, keys) | set(inputs)
+    required = strategy.find_requirements(graph, inputs, keys)
 
     runner = lambda inputs: run_once(graph, inputs, required)
     solved = util.fixpoint(runner, inputs)

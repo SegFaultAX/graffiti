@@ -36,7 +36,7 @@ def test_once_all():
     assert not has_keys(res, "mean")
 
 def test_once_required():
-    res = run_once(graph, inputs, set(["len"]))
+    res = run_once(graph, inputs, { "len" })
     assert has_keys(res, "len")
     assert not has_keys(res, "mean", "sum", "inc")
 
@@ -81,6 +81,16 @@ def test_run_full_eval():
         "dup_a2": sum([x * 2 for x in xs]) * 2,
     }
     assert is_subdict(res, expected)
+
+def test_run_lazy_transitive():
+    graph = {
+        "a": lambda b: 1,
+        "b": lambda c: 1,
+        "c": lambda: 1,
+    }
+    compiled = compile_graph(graph)
+    res = run_graph(compiled, { "b": 1 }, "a")
+    assert not has_keys(res, "c")
 
 def test_run_includes_inputs():
     res = run_graph(graph, { "xs": range(10), "m": 10 })
