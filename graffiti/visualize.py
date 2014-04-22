@@ -21,9 +21,13 @@ from pydot import Dot, Node, Edge
 
 __author__ = "Michael-Keith Bernard"
 
-def to_graphviz(graph):
+def to_graphviz(graph, transitive=False):
     nodes = graph["node_names"]
-    edges = set((k, v) for k, vs in graph["dependencies"].iteritems() for v in vs)
+    if transitive:
+        edges = set((k, v) for k, vs in graph["dependencies"].iteritems() for v in vs)
+    else:
+        edges = set((k, v) for k, vs in graph["nodes"].iteritems() for v in vs["required"])
+
     return {
         "nodes": nodes,
         "edges": edges
@@ -38,8 +42,8 @@ def format_edge(graph, node):
               graph["nodes"][node]["optional"].iteritems()]
     return "{}[{}]".format(node, ", ".join(args + kwargs), )
 
-def visualize(graph, filename="graph.png", include_args=True):
-    data = to_graphviz(graph)
+def visualize(graph, filename="graph.png", include_args=True, transitive=False):
+    data = to_graphviz(graph, transitive)
     dot = Dot(graph_type="digraph")
 
     for node in data["nodes"]:
