@@ -19,36 +19,14 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import inspect
-
-import util
-import keys
-import strategy
+from graffiti import util
+from graffiti import keys
+from graffiti import strategy
 
 __author__ = "Michael-Keith Bernard"
 
 class GraphError(Exception):
     pass
-
-def fninfo(fn):
-    """Gathers argument information about a function.
-    Returns the tuple `(required arguments, optional arguments)`
-    """
-
-    args, varargs, keywords, defaults = inspect.getargspec(fn)
-    defaults = defaults or []
-
-    if defaults:
-        required = args[:-len(defaults)]
-    else:
-        required = args
-    optional = dict(zip(args[-len(defaults):], defaults))
-
-    return {
-        "fn": fn,
-        "required": set(required),
-        "optional": optional,
-    }
 
 def build_nodes(graph):
     """Gather function metadata for graph nodes"""
@@ -56,7 +34,7 @@ def build_nodes(graph):
     acc = {}
     for k, v in graph.iteritems():
         if callable(v):
-            acc[k] = fninfo(v)
+            acc[k] = util.fninfo(v)
         else:
             acc[k] = v
 

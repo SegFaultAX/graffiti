@@ -17,6 +17,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import inspect
 from functools import partial
 
 __author__ = "Michael-Keith"
@@ -30,6 +31,26 @@ def is_dict(d):
     """Returns true if `d` is a subclass of dict"""
 
     return isinstance(d, dict)
+
+def fninfo(fn):
+    """Gathers argument information about a function.
+    Returns the tuple `(required arguments, optional arguments)`
+    """
+
+    args, varargs, keywords, defaults = inspect.getargspec(fn)
+    defaults = defaults or []
+
+    if defaults:
+        required = args[:-len(defaults)]
+    else:
+        required = args
+    optional = dict(zip(args[-len(defaults):], defaults))
+
+    return {
+        "fn": fn,
+        "required": set(required),
+        "optional": optional,
+    }
 
 def get(c, k, default=None):
     try:

@@ -1,38 +1,12 @@
 from nose.tools import raises
 
 from graffiti import core
+from graffiti.util import fninfo
 from graffiti.keys import simplify
-
-def test_fninfo_noargs():
-    fn = lambda: 1
-    info = {
-        "fn": fn,
-        "required": set(),
-        "optional": {}
-    }
-    assert core.fninfo(fn) == info
-
-def test_fninfo_args():
-    fn = lambda a, b: 1
-    info = {
-        "fn": fn,
-        "required": { "a", "b" },
-        "optional": {}
-    }
-    assert core.fninfo(fn) == info
-
-def test_fninfo_kwargs():
-    fn = lambda a, b=1: 1
-    info = {
-        "fn": fn,
-        "required": { "a" },
-        "optional": { "b": 1 }
-    }
-    assert core.fninfo(fn) == info
 
 def test_build_nodes():
     fn = lambda a, b=1: 1
-    info = core.fninfo(fn)
+    info = fninfo(fn)
     graph = {
         "a": fn,
         "b": fn,

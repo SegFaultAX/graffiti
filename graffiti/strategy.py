@@ -20,8 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import util
 from operator import or_
+
+from graffiti import util
 
 def satisfied_by(nodes, inputs):
     """Find all nodes that are satisfied by the inputs but not already in the

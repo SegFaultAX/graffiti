@@ -10,6 +10,33 @@ def test_is_dict():
     assert util.is_dict({})
     assert not util.is_dict([])
 
+def test_fninfo_noargs():
+    fn = lambda: 1
+    info = {
+        "fn": fn,
+        "required": set(),
+        "optional": {}
+    }
+    assert util.fninfo(fn) == info
+
+def test_fninfo_args():
+    fn = lambda a, b: 1
+    info = {
+        "fn": fn,
+        "required": { "a", "b" },
+        "optional": {}
+    }
+    assert util.fninfo(fn) == info
+
+def test_fninfo_kwargs():
+    fn = lambda a, b=1: 1
+    info = {
+        "fn": fn,
+        "required": { "a" },
+        "optional": { "b": 1 }
+    }
+    assert util.fninfo(fn) == info
+
 def test_get_exists():
     assert util.get([1, 2, 3], 2) == 3
     assert util.get({ "a": 1, "b": 2 }, "a") == 1
