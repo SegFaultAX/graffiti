@@ -40,14 +40,12 @@ def fninfo(fn):
     args, varargs, keywords, defaults = inspect.getargspec(fn)
     defaults = defaults or []
 
-    if defaults:
-        required = args[:-len(defaults)]
-    else:
-        required = args
+    required = args[:-len(defaults)] if defaults else args
     optional = dict(zip(args[-len(defaults):], defaults))
 
     return {
         "fn": fn,
+        "args": args,
         "required": set(required),
         "optional": optional,
     }
