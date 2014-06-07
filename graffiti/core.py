@@ -77,7 +77,7 @@ def compile_graph(g):
                        for k, v in transitive(deps).iteritems() }
         required = set(util.concat1(deps.values())) - set(deps)
         optional = util.merge(*[v["optional"] for v in schematized.values()])
-        nodes = set(deps) | set(util.concat1(deps.values())) - required
+        nodes = set(deps)
 
         def _graphfn(_env=None, _keys=None, _prune_keys=False, **kwargs):
             if _env is None:
