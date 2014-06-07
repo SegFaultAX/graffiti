@@ -1,7 +1,7 @@
 from nose.tools import raises
 
-from graffiti import core
-from graffiti import strategy
+from graffiti.legacy import core
+from graffiti.legacy import strategy
 
 simple_desc = {
     "a": lambda b: 1,

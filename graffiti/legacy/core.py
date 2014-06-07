@@ -20,8 +20,8 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from graffiti import util
-from graffiti import keys
-from graffiti import strategy
+from graffiti.legacy import keys
+from graffiti.legacy import strategy
 
 __author__ = "Michael-Keith Bernard"
 

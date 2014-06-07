@@ -1,8 +1,8 @@
 from nose.tools import raises
 
-from graffiti import core
+from graffiti.legacy import core
 from graffiti.util import fninfo
-from graffiti.keys import simplify
+from graffiti.legacy.keys import simplify
 
 def test_build_nodes():
     fn = lambda a, b=1: 1

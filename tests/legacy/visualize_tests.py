@@ -1,5 +1,5 @@
-from graffiti import visualize
-from graffiti.core import compile_graph
+from graffiti.legacy import visualize
+from graffiti.legacy.core import compile_graph
 
 def test_to_graphviz():
     graph = compile_graph({ "a": lambda n: 1 })

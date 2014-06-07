@@ -1,8 +1,8 @@
 from nose.tools import with_setup
 
-from graffiti import Graph
-from graffiti.core import compile_graph, run_once, run_graph
-from graffiti.keys import desimplify
+from graffiti.legacy import Graph
+from graffiti.legacy.core import compile_graph, run_once, run_graph
+from graffiti.legacy.keys import desimplify
 
 descriptor = {
     "len": lambda xs: len(xs),

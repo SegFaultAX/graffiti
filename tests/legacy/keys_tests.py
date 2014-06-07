@@ -1,4 +1,4 @@
-from graffiti import keys
+from graffiti.legacy import keys
 
 def test_expand_key_default():
     simple = keys.expand_key("a__b", 1)
