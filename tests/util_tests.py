@@ -118,17 +118,46 @@ def test_assoc_in():
 def test_assoc_in_empty_path():
     util.assoc_in({}, [], 1)
 
-def test_merge():
-    d1 = { "a": 1 }
-    d2 = { "b": 2 }
-    d3 = { "a": 3 }
-    assert util.merge({}, d1) == d1
-    assert util.merge(d1, {}) == d1
-    assert util.merge(d1, d2) == { "a": 1, "b": 2 }
-    assert util.merge(d1, d2, d3) == { "a": 3, "b": 2 }
+def test_merge_with():
+    x = { "a": 1, "b": 1 }
+    y = { "b": 1, "c": 3 }
+    assert util.merge_with(lambda v1, v2: v1 + v2, x, y) == {
+        "a": 1,
+        "b": 2,
+        "c": 3
+    }
 
 def test_deep_merge_with():
-    pass # TODO
+    x = { "a": 1, "b": { "c": 2 } }
+    y = { "a": 1, "b": { "c": 1, "d": 4 } }
+    assert util.deep_merge_with(lambda v1, v2: v1 + v2, x, y) == {
+        "a": 2,
+        "b": {
+            "c": 3,
+            "d": 4
+        }
+    }
+
+def test_merge():
+    x = { "a": 1, "b": 2 }
+    y = { "b": 3, "d": 4 }
+    assert util.merge(x, y) == {
+        "a": 1,
+        "b": 3,
+        "d": 4
+    }
+
+def test_deep_merge():
+    x = { "a": 1, "b": { "a": 2, "b": 3 } }
+    y = { "a": 2, "b": { "a": 3, "c": 4 } }
+    assert util.deep_merge(x, y) == {
+        "a": 2,
+        "b": {
+            "a": 3,
+            "b": 3,
+            "c": 4
+        }
+    }
 
 def test_walk():
     pass # TODO
