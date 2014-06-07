@@ -55,11 +55,20 @@ def test_run_eval_optional_supplied():
     assert is_subdict(res, { "inc": [x * 5 for x in xs] })
 
 def test_run_lazy_transitive():
-    graph = {
+    desc = {
         "a": lambda b: 1,
         "b": lambda c: 1,
         "c": lambda: 1,
     }
-    graph = compile_graph(graph)
+    graph = compile_graph(desc)
     res = graph(_env={"b": 1}, _keys={"a"})
     assert not has_keys(res, "c")
+
+def test_uncalled_transitive():
+    def b(): raise RuntimeError("Should not be called")
+    desc = {
+        "a": lambda b: 1,
+        "b": b,
+    }
+    graph = compile_graph(desc)
+    graph(b=1)

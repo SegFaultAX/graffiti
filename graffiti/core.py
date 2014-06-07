@@ -40,14 +40,14 @@ def transitive(deps):
     def deps_for(k):
         if k not in deps:
             return [k]
-        trans = set(util.concat(*[deps_for(e) for e in deps[k]]))
+        trans = set(util.concat1(deps_for(e) for e in deps[k]))
         return trans | set(deps[k])
     return { k: deps_for(k) for k in deps }
 
 def topological(deps):
     if not deps:
         return []
-    sources = list(set(deps) - set(util.concat(*deps.values())))
+    sources = list(set(deps) - set(util.concat1(deps.values())))
     if not sources:
         raise ValueError("Graph cycle detected!")
     return (sources +
@@ -75,24 +75,28 @@ def compile_graph(g):
 
         topo_trans = { k: [e for e in topo if e in v]
                        for k, v in transitive(deps).iteritems() }
-        required = set(util.concat(*deps.values())) - set(deps)
+        required = set(util.concat1(deps.values())) - set(deps)
         optional = util.merge(*[v["optional"] for v in schematized.values()])
+        nodes = set(deps) | set(util.concat1(deps.values()))
 
         def _graphfn(_env=None, _keys=None, **kwargs):
             if _env is None:
                 _env = {}
             _env = util.merge(_env, kwargs)
 
-            if _keys is None:
-                _keys = deps
-            _keys = set(_keys)
-
             if required - set(_env):
                 raise ValueError("Unmet graph requirements!")
 
-            all_keys = [dep for k in _keys for dep in deps[k]
-                        if dep not in _env]
-            needed = set(dep for k in all_keys for dep in topo_trans[k]) | _keys
+            if _keys is None:
+                _keys = set(deps)
+                needed = nodes
+            else:
+                _keys = set(_keys)
+                needed = set(td for k in _keys
+                                for d in deps[k]
+                                if d not in _env
+                                for td in topo_trans[k]) | _keys
+
             strategy = [e for e in topo if e in needed and e not in _env]
 
             result = reduce(call_with(schematized), strategy, _env)
@@ -110,6 +114,7 @@ def compile_graph(g):
             "schema": schematized,
             "graph": canonical,
             "ordering": topo,
+            "nodes": nodes,
         }
 
         return _graphfn

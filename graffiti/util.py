@@ -69,6 +69,11 @@ def concat(*lists):
 
     return (e for l in lists for e in l)
 
+def concat1(it):
+    """Like concat, but accepts a single iterator"""
+
+    return (e for es in it for e in es)
+
 def iterate(fn, init):
     """Prodcue values of fn by repeatedly applying it to init, yielding:
         init, fn(init), fn(fn(init)), fn(fn(fn(init))), ...

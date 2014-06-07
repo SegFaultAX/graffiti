@@ -73,6 +73,10 @@ def test_concat():
     assert list(util.concat(l1, [])) == l1
     assert list(util.concat(l1, l2)) == l1 + l2
 
+def test_concat1():
+    l1 = [[1, 2], [3, 4]]
+    assert list(util.concat1(l1)) == [1, 2, 3, 4]
+
 def test_iterate():
     it = util.iterate(lambda n: n + 1, 0)
     assert list(islice(it, 10)) == range(10)
