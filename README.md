@@ -4,7 +4,9 @@ Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 
 ## Installation
 
-**Note**: graffiti is only available through github at the moment!
+`pip install graffiti`
+
+*or*
 
 1. `git clone https://github.com/SegFaultAX/graffiti`
 1. `cd graffiti/`
