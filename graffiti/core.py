@@ -77,7 +77,7 @@ def compile_graph(g):
                        for k, v in transitive(deps).iteritems() }
         required = set(util.concat1(deps.values())) - set(deps)
         optional = util.merge(*[v["optional"] for v in schematized.values()])
-        nodes = set(deps) | set(util.concat1(deps.values()))
+        nodes = set(deps) | set(util.concat1(deps.values())) - required
 
         def _graphfn(_env=None, _keys=None, **kwargs):
             if _env is None:
@@ -109,8 +109,9 @@ def compile_graph(g):
             "fn": _graphfn,
 
             "outputs": set(deps),
-            "dependencies": topo_trans,
+            "dependencies": transitive(deps),
             "direct_dependencies": deps,
+            "dependency_ordering": topo_trans,
             "schema": schematized,
             "graph": canonical,
             "ordering": topo,

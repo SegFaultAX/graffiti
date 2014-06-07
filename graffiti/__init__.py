@@ -102,12 +102,12 @@ class Graph(object):
         self._check_compiled()
         return pformat(self._compiled._schema)
 
-    # TODO: Re-enable graphing!
-    # def visualize(self, filename="graph.png", include_args=True, transitive=False):
-    #     """Make it pretty"""
-    #
-    #     from graffiti.visualize import visualize
-    #     visualize(self, filename, include_args, transitive)
+    def visualize(self, filename="graph.png", include_args=True, transitive=False):
+        """Make it pretty"""
+
+        from graffiti.visualize import visualize
+        self._check_compiled()
+        visualize(self._compiled._schema, filename, include_args, transitive)
 
     @property
     def required(self):
