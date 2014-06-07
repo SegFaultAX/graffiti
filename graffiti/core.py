@@ -26,7 +26,7 @@ __author__ = "Michael-Keith Bernard"
 def schema(v):
     if hasattr(v, "_schema"):
         return v._schema
-    if not callable(v):
+    elif not callable(v):
         v = lambda: v
     return util.fninfo(v)
 
@@ -90,7 +90,9 @@ def compile_graph(g):
             if required - set(_env):
                 raise ValueError("Unmet graph requirements!")
 
-            needed = set(util.concat(*[topo_trans[k] for k in _keys])) | _keys
+            all_keys = [dep for k in _keys for dep in deps[k]
+                        if dep not in _env]
+            needed = set(dep for k in all_keys for dep in topo_trans[k]) | _keys
             strategy = [e for e in topo if e in needed and e not in _env]
 
             result = reduce(call_with(schematized), strategy, _env)

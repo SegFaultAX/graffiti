@@ -24,8 +24,8 @@ from graffiti.core import compile_graph
 __author__ = "Michael-Keith Bernard"
 
 class Graph(object):
-    def __init__(self):
-        self.graph = {}
+    def __init__(self, descriptor=None):
+        self.graph = {} if descriptor is None else descriptor
         self._compiled = None
 
     def compile(self):
@@ -55,6 +55,14 @@ class Graph(object):
 
         self._check_compiled()
         return self._compiled(*args, **kwargs)
+
+    def add_node(self, name, func):
+        self._compiled = None
+        self.graph[name] = func
+
+    def del_node(self, name):
+        self._compiled = None
+        del self.graph[name]
 
     def node(self, func_or_name):
         """Node decorator
