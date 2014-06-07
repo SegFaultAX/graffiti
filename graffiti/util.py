@@ -17,6 +17,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import copy
 import inspect
 from functools import partial
 
@@ -53,7 +54,7 @@ def fninfo(fn):
 def get(c, k, default=None):
     try:
         return c[k]
-    except:
+    except (KeyError, TypeError, IndexError, ValueError):
         return default
 
 def get_in(c, ks, default=None):
@@ -66,7 +67,7 @@ def get_in(c, ks, default=None):
 def concat(*lists):
     """Concatenate multiple lists together"""
 
-    return [e for l in lists for e in l]
+    return (e for l in lists for e in l)
 
 def iterate(fn, init):
     """Prodcue values of fn by repeatedly applying it to init, yielding:
@@ -98,21 +99,41 @@ def fixpoint(fn, inputs, cmp=None, max_iter=10000):
             raise ValueError(msg)
         prev = e
 
-def group_by(fn, l):
-    """Group elements in `l` by a keying function `fn`"""
-
+def categorize(fn, l):
     acc = {}
     for e in l:
-        key = fn(e)
-        if key not in acc:
-            acc[key] = []
-        acc[key].append(e)
+        for key in fn(e):
+            acc.setdefault(key, []).append(e)
     return acc
+
+def group_by(fn, l):
+    return categorize(lambda e: [fn(e)], l)
 
 def select_keys(fn, d):
     """Returns a new dict with keys where the predicate function is truthy"""
 
     return { k: v for k, v in d.iteritems() if fn(k, v) }
+
+def mapkv(fn, d):
+    """Apply `fn` to each k/v pair of `d`
+    `fn` should return a new (k, v) pair
+    """
+
+    return dict(fn(k, v) for k, v in d.iteritems())
+
+def map_keys(fn, d):
+    """Applies `fn` to all keys of `d`
+    `fn` should return a new key for pair
+    """
+
+    return mapkv(lambda k, v: (fn(k), v), d)
+
+def map_vals(fn, d):
+    """Applies `fn` to all values of `d`
+    `fn` should return a new value for pair
+    """
+
+    return mapkv(lambda k, v: (k, fn(v)), d)
 
 def assoc(d, k, v):
     """Adds key `k` with value `v` to dicts `d`. If `d` is None, a new dict is
@@ -121,8 +142,9 @@ def assoc(d, k, v):
 
     if d is None:
         d = {}
-    d[k] = v
-    return d
+    d2 = copy.copy(d)
+    d2[k] = v
+    return d2
 
 def assoc_in(d, key_path, v):
     """Adds a value `v` into the dict `d` by traversing key_path recursively. If
@@ -137,27 +159,37 @@ def assoc_in(d, key_path, v):
     else:
         return assoc(d, key, assoc_in(get(d, key), rest, v))
 
-def merge(*dicts):
-    """Merges any number of dicts together, replacing repeated keys"""
-
-    return { k: v for d in dicts for k, v in d.iteritems() }
-
-def deep_merge_with(fn, *dicts):
-    """Like merge, but preserves shared key paths recursively. `fn` is applied
-    to values of dicts when collisions occur.
-    """
+def merge_with(fn, *dicts):
+    """Merge 2 or more dicts, using `fn` for conflicting values"""
 
     def _merge(d1, d2):
         for k, v in d2.iteritems():
             if k in d1:
-                if is_dict(d1[k]) and is_dict(v):
-                    d1[k] = _merge(d1[k], v)
-                else:
-                    d1[k] = fn(d1[k], v)
+                d1[k] = fn(d1[k], v)
             else:
                 d1[k] = v
         return d1
     return reduce(_merge, dicts, {})
+
+def merge(*dicts):
+    """Like `merge_with`, but last value always wins"""
+
+    return merge_with(lambda _, v: v, *dicts)
+
+def deep_merge_with(fn, *dicts):
+    """Like `merge_with`, but nested dicts are merged recursively"""
+
+    def _merge(v1, v2):
+        if is_dict(v1) and is_dict(v2):
+            return deep_merge_with(fn, v1, v2)
+        else:
+            return fn(v1, v2)
+    return merge_with(_merge, *dicts)
+
+def deep_merge(*dicts):
+    """Like `deep_merge_with`, but last value wins for non-dict conflicts"""
+
+    return deep_merge_with(lambda _, v: v, *dicts)
 
 def walk(inner, outer, coll):
     """Walks `coll` calling `inner` on each element and `outer` on each
