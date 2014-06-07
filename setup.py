@@ -74,7 +74,7 @@ class run_audit(Command):
 
 setup(
     name='graffiti',
-    version='0.0.1-dev',
+    version='0.1.0',
     url='https://github.com/SegFaultAX/graffiti',
     license='MIT',
     author='Michael-Keith Bernard',
@@ -88,6 +88,12 @@ setup(
     install_requires=[
     ],
     classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+        "Topic :: Software Development :: Libraries"
     ],
     cmdclass={'audit': run_audit}
 )
