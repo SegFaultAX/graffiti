@@ -58,7 +58,7 @@ def call_with(schema):
         fn, args = schema[key]["fn"], schema[key]["args"]
         argmap = util.select_keys(lambda k, _: k in args, env)
         if hasattr(fn, "_schema"):
-            res = fn(_env=argmap)
+            res = fn(_env=argmap, _prune_keys=True)
         else:
             res = fn(**argmap)
         return util.merge(env, { key: res })
@@ -79,7 +79,7 @@ def compile_graph(g):
         optional = util.merge(*[v["optional"] for v in schematized.values()])
         nodes = set(deps) | set(util.concat1(deps.values())) - required
 
-        def _graphfn(_env=None, _keys=None, **kwargs):
+        def _graphfn(_env=None, _keys=None, _prune_keys=False, **kwargs):
             if _env is None:
                 _env = {}
             _env = util.merge(_env, kwargs)
@@ -98,9 +98,12 @@ def compile_graph(g):
                                 for td in topo_trans[k]) | _keys
 
             strategy = [e for e in topo if e in needed and e not in _env]
-
             result = reduce(call_with(schematized), strategy, _env)
-            return util.select_keys(lambda k, _: k in deps, result)
+
+            if _prune_keys:
+                result = util.select_keys(lambda k, _: k in deps, result)
+
+            return result
 
         _graphfn._schema = {
             "required": required,

@@ -35,7 +35,8 @@ def test_run_multiple_keys():
 
 def test_run_all_keys():
     res = graph(_env=inputs)
-    assert res == {
+    assert is_subdict(res,
+    {
         "len": 10,
         "sum": sum(xs),
         "mean": float(sum(xs)) / 10,
@@ -44,7 +45,28 @@ def test_run_all_keys():
             "a": sum([x * 2 for x in xs]),
             "a2": sum([x * 2 for x in xs]) * 2,
         },
+    })
+
+def test_prune_keys():
+    res = graph(_env=inputs)
+    assert is_subdict(res, inputs)
+
+    res = graph(_env=inputs, _prune_keys=True)
+    assert not has_keys(res, "xs")
+
+def test_deeply_nested():
+    desc = {
+        "a": {
+            "b": {
+                "c": {
+                    "d": lambda xs: sum(xs)
+                }
+            }
+        }
     }
+    graph = compile_graph(desc)
+    res = graph({ "xs": [1, 2, 3] })
+    assert is_subdict(res, { "a": { "b": { "c": { "d": 6 } } } })
 
 def test_run_eval_optional_default():
     res = graph(_env=inputs)
