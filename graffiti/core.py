@@ -104,53 +104,10 @@ def compile_graph(g):
 
             "outputs": set(deps),
             "dependencies": topo_trans,
+            "direct_dependencies": deps,
             "schema": schematized,
             "graph": canonical,
             "ordering": topo,
         }
 
         return _graphfn
-
-class Graph(object):
-    def __init__(self):
-        self.graph = {}
-        self._compiled = None
-
-    def compile(self):
-        for v in self.graph.values():
-            if isinstance(v, Graph):
-                v.compile()
-        self._compiled = compile_graph(self.graph)
-        return self._compiled
-
-    def _check_compiled(self):
-        if self._compiled is None:
-            self.compile()
-
-    @property
-    def _schema(self):
-        self._check_compiled()
-        return self._compiled._schema
-
-    def __call__(self, *args, **kwargs):
-        self._check_compiled()
-        return self._compiled(*args, **kwargs)
-
-    def node(self, func_or_name):
-        self._compiled = None
-
-        def _decorator(fn):
-            self.graph[func_or_name] = fn
-            return fn
-
-        if callable(func_or_name):
-            self.graph[func_or_name.func_name] = func_or_name
-            return func_or_name
-        else:
-            return _decorator
-
-    def subgraph(self, name):
-        self._compiled = None
-        sub = Graph()
-        self.graph[name] = sub
-        return sub
