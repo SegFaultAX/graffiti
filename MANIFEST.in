@@ -1,5 +1,1 @@
 include LICENSE README.md
-include graffiti
-recursive-include tests *
-recursive-exclude tests *.pyc
-recursive-exclude tests *.pyo
