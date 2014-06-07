@@ -14,6 +14,7 @@ def test_fninfo_noargs():
     fn = lambda: 1
     info = {
         "fn": fn,
+        "args": [],
         "required": set(),
         "optional": {}
     }
@@ -23,6 +24,7 @@ def test_fninfo_args():
     fn = lambda a, b: 1
     info = {
         "fn": fn,
+        "args": ["a", "b"],
         "required": { "a", "b" },
         "optional": {}
     }
@@ -32,6 +34,7 @@ def test_fninfo_kwargs():
     fn = lambda a, b=1: 1
     info = {
         "fn": fn,
+        "args": ["a", "b"],
         "required": { "a" },
         "optional": { "b": 1 }
     }
@@ -66,9 +69,9 @@ def test_get_in_default_nested():
 def test_concat():
     l1 = [1, 2]
     l2 = [3, 4]
-    assert util.concat([], l1) == l1
-    assert util.concat(l1, []) == l1
-    assert util.concat(l1, l2) == l1 + l2
+    assert list(util.concat([], l1)) == l1
+    assert list(util.concat(l1, [])) == l1
+    assert list(util.concat(l1, l2)) == l1 + l2
 
 def test_iterate():
     it = util.iterate(lambda n: n + 1, 0)
