@@ -1,7 +1,5 @@
 # graffiti - a library for declarative computation
 
-Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
-
 ## Installation
 
 `pip install graffiti`
@@ -14,6 +12,12 @@ Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 1. To get development dependencies: `pip install -r requirements.txt`
 1. To run tests: `nosetests`
 1. To audit source: `python setup.py audit`
+
+Check out my [blog post](http://mkbernard.com/blog/2014/06/graffiti-a-python-library-for-declarative-computation/)
+for more background on the "why" of this project. Get in touch if you have any
+comments or questions!
+
+Inspired by Prismatic's Graph library (https://github.com/prismatic/plumbing)
 
 ## Overview
 
