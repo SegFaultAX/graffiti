@@ -126,3 +126,21 @@ def test_uber_graph():
 @raises(ValueError)
 def test_unmet_dependencies():
     graph()
+
+def test_raw_values():
+    desc = {
+        "a": 1,
+        "b": "two",
+        "c": [1, 2, 3],
+        "d": {4},
+        "e": lambda a, b, c, d: [a, b, c, d]
+    }
+    compiled = compile_graph(desc)
+    assert compiled() == {
+        "a": 1,
+        "b": "two",
+        "c": [1, 2, 3],
+        "d": {4},
+        "e": [1, "two", [1, 2, 3], {4}]
+    }
+
