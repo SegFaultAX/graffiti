@@ -26,9 +26,7 @@ __author__ = "Michael-Keith Bernard"
 def schema(v):
     if hasattr(v, "_schema"):
         return v._schema
-    elif not callable(v):
-        v = lambda: v
-    return util.fninfo(v)
+    return util.fninfo(v if callable(v) else lambda: v)
 
 def dependencies(g):
     deps = {}
@@ -53,6 +51,12 @@ def topological(deps):
     return (sources +
         topological(util.select_keys(lambda k, _: k not in sources, deps)))
 
+def required_keys(requested, given, deps):
+    requested = set(requested) - set(given)
+    unmet = util.map_vals(lambda v: set(v) - set(given), deps)
+    required = util.select_keys(lambda k, _: k in requested, unmet)
+    return requested | set(util.concat1(required.values()))
+
 def call_with(schema):
     def _invoke(env, key):
         fn, args = schema[key]["fn"], schema[key]["args"]
@@ -65,7 +69,7 @@ def call_with(schema):
     return _invoke
 
 def compile_graph(g):
-    if callable(g):
+    if not isinstance(g, dict):
         return g
     else:
         canonical = util.map_vals(compile_graph, g)
@@ -92,10 +96,7 @@ def compile_graph(g):
                 needed = nodes
             else:
                 _keys = set(_keys)
-                needed = set(td for k in _keys
-                                for d in deps[k]
-                                if d not in _env
-                                for td in topo_trans[k]) | _keys
+                needed = required_keys(_keys, _env, deps)
 
             strategy = [e for e in topo if e in needed and e not in _env]
             result = reduce(call_with(schematized), strategy, _env)
@@ -111,7 +112,6 @@ def compile_graph(g):
             "args": required | set(optional),
             "fn": _graphfn,
 
-            "outputs": set(deps),
             "dependencies": transitive(deps),
             "direct_dependencies": deps,
             "dependency_ordering": topo_trans,

@@ -125,9 +125,9 @@ class Graph(object):
         return self._compiled._schema["args"]
 
     @property
-    def outputs(self):
+    def nodes(self):
         self._check_compiled()
-        return self._compiled._schema["outputs"]
+        return self._compiled._schema["nodes"]
 
     @property
     def dependencies(self):

@@ -1,3 +1,5 @@
+from nose.tools import raises
+
 from graffiti import core
 from graffiti import util
 
@@ -50,3 +52,8 @@ def test_topological():
     assert res.index("d") > res.index("c")
     assert res.index("c") > res.index("b")
     assert res.index("b") > res.index("a")
+
+@raises(ValueError)
+def test_cycle_detection():
+    g = { "a": {"b"}, "b": {"a"} }
+    core.topological(g)

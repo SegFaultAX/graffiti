@@ -1,3 +1,5 @@
+from nose.tools import raises
+
 from graffiti.core import compile_graph
 
 descriptor = {
@@ -15,6 +17,28 @@ descriptor = {
 graph = compile_graph(descriptor)
 xs = range(10)
 inputs = { "xs": xs }
+
+uber_descriptor = {
+    "a": lambda b, x=1: "a",
+    "b": lambda c: "b",
+    "c": {
+        "d": {
+            "e": {
+                "f": lambda g: "f",
+                "g": lambda h: "g",
+            }
+        },
+        "h": {
+            "i": {
+                "a": "OVERRIDE_a",
+                "b": "OVERRIDE_b",
+                "c": "OVERRIDE_c",
+                "j": lambda a, b, c: "j"
+            }
+        }
+    },
+    "k": lambda c: c["d"],
+}
 
 def has_keys(d, *keys):
     return all(key in d for key in keys)
@@ -94,3 +118,11 @@ def test_uncalled_transitive():
     }
     graph = compile_graph(desc)
     graph(b=1)
+
+def test_uber_graph():
+    graph = compile_graph(uber_descriptor)
+    graph()
+
+@raises(ValueError)
+def test_unmet_dependencies():
+    graph()
