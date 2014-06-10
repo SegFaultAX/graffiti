@@ -52,10 +52,12 @@ def topological(deps):
         topological(util.select_keys(lambda k, _: k not in sources, deps)))
 
 def required_keys(requested, given, deps):
-    requested = set(requested) - set(given)
-    unmet = util.map_vals(lambda v: set(v) - set(given), deps)
-    required = util.select_keys(lambda k, _: k in requested, unmet)
-    return requested | set(util.concat1(required.values()))
+    required = set(requested)
+    for r in requested:
+        trans = set(deps[r])
+        prune = set(util.concat1(deps[t] for t in trans if t in given))
+        required |= trans - prune
+    return required
 
 def call_with(schema):
     def _invoke(env, key):
@@ -96,7 +98,7 @@ def compile_graph(g):
                 needed = nodes
             else:
                 _keys = set(_keys)
-                needed = required_keys(_keys, _env, deps)
+                needed = required_keys(_keys, _env, topo_trans)
 
             strategy = [e for e in topo if e in needed and e not in _env]
             result = reduce(call_with(schematized), strategy, _env)
